@@ -59,7 +59,7 @@ pkgpyexec_LTLIBRARIES =
 # linker flags
 common_ldflags = -module -avoid-version
 if PLATFORM_WIN32
-common_ldflags += -no-undefined
+common_ldflags += -no-undefined $(PYTHON_LIBS)
 endif
 
 # atk module

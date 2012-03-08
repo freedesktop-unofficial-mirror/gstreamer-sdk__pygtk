@@ -77,10 +77,34 @@ m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
 
 AM_PATH_PYTHON(2.3.5)
 
-AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
+if test "x$cross_compiling" = "xyes" -a "x$os_win32" == "xyes" ; then
+  # skip python cheks if cross-compiling to windows
+  # $PYTHON_INCLUDES and PYTHON_LIBS should be set properly
+  save_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  /* end confdefs.h.  */
+  #include <Python.h>
+_ACEOF
+  if ac_fn_c_try_cpp "$LINENO"; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+      $as_echo "found" >&6; }
+
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+      $as_echo "not found" >&6; }
+    as_fn_error $? "could not find Python headers" "$LINENO" 5
+   fi
+   rm -f conftest.err conftest.i conftest.$ac_ext
+   CPPFLAGS="$save_CPPFLAGS"
+   AC_SUBST(PYTHON_LIBS)
+else
+  AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
+fi
+
 
 AC_MSG_CHECKING([for PySignal_SetWakeupFd in Python.h])
-py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
+if test $platform_win32 != yes ; then
 old_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="-Wall -Werror $PYTHON_INCLUDES"
 AC_TRY_COMPILE([#include <Python.h>],
@@ -93,6 +117,9 @@ if test "x$setwakeupfd_ok" != xno; then
                 [Define to 1 if PySignal_SetWakeupFd is available])
 fi
 CPPFLAGS=$old_CPPFLAGS
+else
+AC_MSG_RESULT(no)
+fi
 
 AC_ARG_ENABLE(thread,
   AC_HELP_STRING([--disable-thread], [Disable pygtk threading support]),,
