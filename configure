@@ -12503,14 +12503,36 @@ $as_echo "$am_cv_python_pyexecdir" >&6; }
   fi
 
 
+if test "x$cross_compiling" = "xyes" -a "x$os_win32" == "xyes" ; then
+  # skip python cheks if cross-compiling to windows
+  # $PYTHON_INCLUDES and PYTHON_LIBS should be set properly
+  save_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  /* end confdefs.h.  */
+  #include <Python.h>
+_ACEOF
+  if ac_fn_c_try_cpp "$LINENO"; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+      $as_echo "found" >&6; }
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+      $as_echo "not found" >&6; }
+    as_fn_error $? "could not find Python headers" "$LINENO" 5
+   fi
+   rm -f conftest.err conftest.i conftest.$ac_ext
+   CPPFLAGS="$save_CPPFLAGS"
+
+else
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for headers required to compile python extensions" >&5
 $as_echo_n "checking for headers required to compile python extensions... " >&6; }
-py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
-py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
-if test -x "$PYTHON-config"; then
-PYTHON_INCLUDES=`$PYTHON-config --includes 2>/dev/null`
+py_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.prefix)"`
+py_exec_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.exec_prefix)"`
+PYTHON_CONFIG=`which $PYTHON`-config
+if test -x "$PYTHON_CONFIG"; then
+PYTHON_INCLUDES=`$PYTHON_CONFIG --includes 2>/dev/null`
 else
 PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
 if test "$py_prefix" != "$py_exec_prefix"; then
@@ -12535,11 +12557,12 @@ as_fn_error $? "could not find Python headers" "$LINENO" 5
 fi
 rm -f conftest.err conftest.i conftest.$ac_ext
 CPPFLAGS="$save_CPPFLAGS"
+fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for PySignal_SetWakeupFd in Python.h" >&5
 $as_echo_n "checking for PySignal_SetWakeupFd in Python.h... " >&6; }
-py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
+if test $platform_win32 != yes ; then
 old_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="-Wall -Werror $PYTHON_INCLUDES"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -12567,6 +12590,10 @@ $as_echo "#define HAVE_PYSIGNAL_SETWAKEUPFD 1" >>confdefs.h
 
 fi
 CPPFLAGS=$old_CPPFLAGS
+else
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
 
 # Check whether --enable-thread was given.
 if test "${enable_thread+set}" = set; then :
