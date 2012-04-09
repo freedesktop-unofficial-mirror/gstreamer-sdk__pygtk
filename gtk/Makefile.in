@@ -368,6 +368,7 @@ INCLUDES = \
 	$(PYGOBJECT_CFLAGS) \
 	-I$(srcdir)/gtk
 
+@USE_QUARTZ_TRUE@INCLUDES+="-xobjective-c"
 
 # defs files
 defsdir = $(pkgdatadir)/$(PLATFORM_VERSION)/defs

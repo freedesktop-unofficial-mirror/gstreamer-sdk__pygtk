@@ -798,6 +798,8 @@ GTK210_LIBS
 GTK210_CFLAGS
 BUILD_GTK_FALSE
 BUILD_GTK_TRUE
+USE_QUARTZ_TRUE
+USE_QUARTZ_FALSE
 GTK_LIBS
 GTK_CFLAGS
 BUILD_PANGOCAIRO_FALSE
@@ -14714,6 +14716,14 @@ case $gdk_target in
         x11) PYGTK_CODEGEN_DEFINES="$PYGTK_CODEGEN_DEFINES -DGDK_TARGET_X11"
         ;;
 esac
+
+if test "x$gdk_target" = "xquartz"; then
+  USE_QUARTZ_TRUE=''
+  USE_QUARTZ_FALSE='#'
+else
+  USE_QUARTZ_TRUE='#'
+  USE_QUARTZ_FALSE=''
+fi
 
 
 # Check whether --enable-numpy was given.
