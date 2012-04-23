@@ -12505,7 +12505,7 @@ $as_echo "$am_cv_python_pyexecdir" >&6; }
   fi
 
 
-if test "x$cross_compiling" = "xyes" -a "x$os_win32" == "xyes" ; then
+if test "x$os_win32" == "xyes" ; then
   # skip python cheks if cross-compiling to windows
   # $PYTHON_INCLUDES and PYTHON_LIBS should be set properly
   save_CPPFLAGS="$CPPFLAGS"

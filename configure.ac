@@ -77,7 +77,7 @@ m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
 
 AM_PATH_PYTHON(2.3.5)
 
-if test "x$cross_compiling" = "xyes" -a "x$os_win32" == "xyes" ; then
+if test "x$os_win32" == "xyes" ; then
   # skip python cheks if cross-compiling to windows
   # $PYTHON_INCLUDES and PYTHON_LIBS should be set properly
   save_CPPFLAGS="$CPPFLAGS"
